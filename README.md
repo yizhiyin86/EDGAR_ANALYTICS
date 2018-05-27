@@ -16,14 +16,14 @@ All these are from the Python Standard Library so no additional installations ar
 ### Helper functions 
 ### function check_id(input_list,query_ID)
 * input: 
-** input_list = users ([ ['ID',0,0,1], [..],[..] ])
-** query_ID='ID'
+- input_list = users ([ ['ID',0,0,1], [..],[..] ])
+- query_ID='ID'
 * Goal: 
-** examine if the query_ID is in the input_list 
-** Used to check if the upcoming request is from an existing user or not
+- examine if the query_ID is in the input_list 
+- Used to check if the upcoming request is from an existing user or not
 * return:
-** 'NOT FOUND' if query_ID is not in the input_list
-** the index of the query_ID if it is in the input_list
+- 'NOT FOUND' if query_ID is not in the input_list
+- the index of the query_ID if it is in the input_list
 
 
 

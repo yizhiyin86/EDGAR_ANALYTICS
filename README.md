@@ -143,8 +143,203 @@ def session_info(input_list):
 
 ```
 
-### Code
-<li><a href="https://github.com/yizhiyin86/EDGAR_ANALYTICS/blob/master/src/sessionization.py">link to the scipt</a></li>link to the scipt
+### Main script
+```python
+#file name and the folder name for the input
+input_dirt='input'
+input_file='log.csv'
+#file name and folder name for the output
+output_dirt='output'
+output_file='sessionization.txt'
+#get the inactivity name
+inactivity_file='inactivity_period.txt'
+
+#join the path for the input csv file
+input_path=os.path.join(input_dirt,input_file)
+
+# get the inactivity_value
+inactivity_path=os.path.join(input_dirt,inactivity_file)
+with open(inactivity_path,'r') as text:
+    inactivity_value=text.read()
+#convert the inactivity_value as int
+inactivity_value=int(inactivity_value)
+
+#cler the output file before each testing
+output_path=os.path.join(output_dirt,output_file)
+with open(output_path,'w',newline='') as output_file:
+    output_file.truncate()
+
+
+#set up a empty list to hold all user users=[[user],[user],..]
+users=[]
+#unit of time stamp is recorded 
+#I assume in general it is 1 second not 0.5 or 0.1 second 
+time_unit=1
+
+#calculate how many time stamps to examine to consider inactivity
+col_to_check= int(inactivity_value/time_unit)
+
+
+#read input csv
+with open(input_path,'r',newline='') as csvfile:
+    csv_reader=csv.reader(csvfile,delimiter=',')
+    #skip header
+    next(csv_reader, None)
+    #assign initial value
+    first_row=next(csv_reader)
+    
+    sessiontime=datetime.strptime(first_row[1]+'-'+first_row[2], '%Y-%m-%d-%H:%M:%S')
+    #get the id and the count at the first time_stamp for the first user and append it to the users list
+    user=[first_row[0],1]
+    users.append(user)
+    #set up the current time_stamp as the first user's sessiontime
+    time_stamp=datetime.strptime(first_row[1]+'-'+first_row[2], '%Y-%m-%d-%H:%M:%S')
+    
+    #set up initial_start to monitor the starting time of current session to examine for inacitivity
+    initial_start=sessiontime
+
+    #Constant variable not changing  the beginning of all the requests
+    #need it for printing output
+    beginning=datetime.strptime(first_row[1]+'-'+first_row[2], '%Y-%m-%d-%H:%M:%S')
+
+    #iterate starting from the second user
+    for row in csv_reader:
+        cur_row=row
+        next_row=next(csv_reader,None)
+
+        # if the current row is the last row
+        if next_row==None:
+            
+            #assign the time of request as sessiontime
+            sessiontime=datetime.strptime(cur_row[1]+'-'+cur_row[2], '%Y-%m-%d-%H:%M:%S')
+
+            #calculate the time difference between the requested time and the time_stamp
+            delta_second=int((sessiontime-time_stamp).total_seconds())
+
+            #store IP address as user_id
+            user_id=cur_row[0]
+
+            # check whether if the time stamp has changed
+            if delta_second == 0:
+                #check if the the request is from an existing user
+                user_index=check_id(users,user_id)
+                
+                #if the request is from a new user
+                if user_index=='Not Found':
+                    #then it is a new user append new user, col_to_add is 0 since time_stamp has not changed
+                    add_new_user(users,user_id,0)
+                
+                #if the request is from an existing user
+                else:
+                    # incrase the count at the current time_stamp (should be the last value in the list)
+                    users[user_index][-1]+=1
+            
+            # if the sessiontime is greather than the time_stamp,append the user
+            elif delta_second>0:
+                #figure out how many units of time has passed between the time difference between this current request from the last request
+                col_to_add=int(delta_second/time_unit)
+                
+                #append this request
+                # check if the request is from an new user or an existing user
+                user_index=check_id(users,user_id)
+                #if new user, append
+                if user_index== 'Not Found':
+                    add_new_user(users,user_id,col_to_add)
+
+                #if request is from an existing user 
+                else:
+                    #we need to elapsed time units ( [0] *col_to_add ) to all user in the users
+                    # and update the count for the last time stamp with a value of 1 for this request
+                    # add_new_user() can update all users' time stamp and append this request as if it is from a new user at last
+                    add_new_user(users,user_id,col_to_add)
+                    #pop up the redundantly appended new_user (actually it is an old user)
+                    users.pop()
+                    #change the count at the current time stamp for at the correct index
+                    users[user_index][-1]=1
+
+                #change time_stamp to the current sessiontime
+                time_stamp=sessiontime          
+
+
+
+        # if not the last row
+        else:
+            rows=[cur_row,next_row]
+            for each_row in rows:
+                sessiontime = datetime.strptime(each_row[1]+'-'+each_row[2], '%Y-%m-%d-%H:%M:%S')
+                delta_second=int((sessiontime-time_stamp).total_seconds())
+                user_id=each_row[0]
+
+
+                if delta_second == 0:
+                        #check if it is a new user
+                        user_index=check_id(users,user_id)
+                        if user_index=='Not Found':
+                            #then it is a new user append new user
+                            add_new_user(users,user_id,delta_second)
+                        #if the new user is in the  list
+                        else:
+                            #add count at current session by 1
+                            users[user_index][-1]+=1
+
+                
+                elif delta_second>0:
+
+                    col_to_add=int(delta_second/time_unit)
+                    #examine if current session is over
+                    if sessiontime>initial_start+timedelta(seconds=(inactivity_value)):
+                        #use split_session to split expired and remaining users
+                        # split_session return removed_users[[..],[..]],remaining_users[[..],[..],[..]]
+                        users,expired_users= split_session(users,col_to_check)
+                        # print('Session started at  {} for the following users have ended'.format(initial_start))
+                        # debug(expired_users)
+                        
+                        #export the removed users 
+                        with open(output_path,'a',newline='') as output_file:
+                            writer = csv.writer(output_file)
+                            for expired in expired_users:
+                                    expired_id=expired[0]
+                                    request_start,request_end,duration,count=session_info(expired[1:])
+                                    session_start=(beginning+timedelta(seconds=request_start*time_unit)).strftime('%Y-%m-%d %H:%M:%S')
+                                    session_end=(beginning+timedelta(seconds=request_end*time_unit)).strftime('%Y-%m-%d %H:%M:%S')
+                                    line=[expired_id,session_start,session_end,duration,count]
+                                    writer.writerow(line)
+                        #update the start time of session to examine by one unit of time stamp
+                        initial_start+=timedelta(seconds=time_unit)
+
+                    
+                    #append this current request to the users (may or may not changed depending on if one session has been examined)
+                    # check user index again
+                    user_index=check_id(users,user_id)
+                    if user_index== 'Not Found':
+                        add_new_user(users,user_id,col_to_add)
+                        
+                    else:
+                        add_new_user(users,user_id,col_to_add)
+                        users.pop()
+                        users[user_index][-1]=1
+
+                    #flip session time
+                    time_stamp=sessiontime
+
+
+#function to print the rest of users
+# print('\n After all the loop, the remaining users are\n')
+# debug(users)
+#function to print the rest of users
+if len(users) !=0:
+    with open(output_path,'a',newline='') as output_file:
+        writer = csv.writer(output_file)
+        for user in users:
+            user_id=user[0]
+            request_start,request_end,duration,count=session_info(user[1:])
+            session_start=(beginning+timedelta(seconds=request_start*time_unit)).strftime('%Y-%m-%d %H:%M:%S')
+            session_end=(beginning+timedelta(seconds=request_end*time_unit)).strftime('%Y-%m-%d %H:%M:%S')
+            line=[user_id,session_start,session_end,duration,count]
+            writer.writerow(line)
+ ```
+
+
 
         
 

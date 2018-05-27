@@ -146,6 +146,12 @@ def session_info(input_list):
 ### Main script
 ```python
 #file name and the folder name for the input
+# import dependencies
+import csv
+import os
+from datetime import datetime,timedelta
+
+
 input_dirt='input'
 input_file='log.csv'
 #file name and folder name for the output
@@ -338,7 +344,6 @@ if len(users) !=0:
             line=[user_id,session_start,session_end,duration,count]
             writer.writerow(line)
  ```
-
 
 
         

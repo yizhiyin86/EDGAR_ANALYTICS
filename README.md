@@ -344,6 +344,14 @@ if len(users) !=0:
             line=[user_id,session_start,session_end,duration,count]
             writer.writerow(line)
  ```
+### One example output
+The content of the  sessionization.txt tested on the provided example is 
+*101.81.133.jja,2017-06-30 00:00:00,2017-06-30 00:00:00,1,1
+*108.91.91.hbc,2017-06-30 00:00:01,2017-06-30 00:00:01,1,1
+*107.23.85.jfd,2017-06-30 00:00:00,2017-06-30 00:00:03,4,4
+*106.120.173.jie,2017-06-30 00:00:02,2017-06-30 00:00:02,1,1
+*107.178.195.aag,2017-06-30 00:00:02,2017-06-30 00:00:04,3,2
+*108.91.91.hbc,2017-06-30 00:00:04,2017-06-30 00:00:04,1,1
 
 
         

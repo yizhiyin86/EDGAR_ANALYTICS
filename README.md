@@ -54,7 +54,7 @@ def check_id(input_list,ID):
     - No return. Just used to update input_list
 * example:
     -input_list= [ ['a',0,1],['b',1,1 ] ], new_id = 'c', col_add= 1
-    - Update the input_list to [ ['a',0,1],['b',1,1 ],['c',0,1] ]
+    - Update the input_list to [ ['a',0,1,0],['b',1,1,0],['c',0,0,1] ]
 ``` python
 def add_new_user(input_list,new_id,col_add):
     if col_add!=0:

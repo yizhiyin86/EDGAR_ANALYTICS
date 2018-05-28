@@ -286,7 +286,7 @@ with open(input_path,'r',newline='') as csvfile:
                             add_new_user(users,user_id,delta_second)
                         #if the new user is in the  list
                         else:
-                            #add count at current session by 1
+                            #add count at current time_stamp by 1
                             users[user_index][-1]+=1
 
                 
@@ -296,10 +296,10 @@ with open(input_path,'r',newline='') as csvfile:
                     #examine if current session is over
                     if sessiontime>initial_start+timedelta(seconds=(inactivity_value)):
                         #use split_session to split expired and remaining users
-                        # split_session return removed_users[[..],[..]],remaining_users[[..],[..],[..]]
+                        # split_session return remaining_users[[..],[..]],removed_users[[..],[..],[..]]
                         users,expired_users= split_session(users,col_to_check)
-                        # print('Session started at  {} for the following users have ended'.format(initial_start))
-                        # debug(expired_users)
+                       
+                        
                         
                         #export the removed users 
                         with open(output_path,'a',newline='') as output_file:
@@ -330,9 +330,7 @@ with open(input_path,'r',newline='') as csvfile:
                     time_stamp=sessiontime
 
 
-#function to print the rest of users
-# print('\n After all the loop, the remaining users are\n')
-# debug(users)
+
 #function to print the rest of users
 if len(users) !=0:
     with open(output_path,'a',newline='') as output_file:

@@ -357,7 +357,7 @@ The content of the  `sessionization.txt` tested on the provided example is as fo
 
 It is as expected.
 
-I also run `run_tests.sh` within in the insight_testsuite folder.  I tested it using the provided example and also another example I generated. I got two success tests. Below is the content of the `results.txt`, once I ran the test
+I also run `run_tests.sh` within in the insight_testsuite folder.  I tested it using the provided example and another example I generated. I got two success tests. Below is the content of the `results.txt`, once I ran the test
 ```txt
 [Sun May 27 16:29:38 CDT 2018] 2 of 2 tests passed
 ``

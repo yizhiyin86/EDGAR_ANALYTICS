@@ -344,7 +344,7 @@ if len(users) !=0:
             line=[user_id,session_start,session_end,duration,count]
             writer.writerow(line)
  ```
-### One example output
+## Output Examples
 The content of the  `sessionization.txt` tested on the provided example is as follows:
 ```txt
 101.81.133.jja,2017-06-30 00:00:00,2017-06-30 00:00:00,1,1
@@ -357,7 +357,10 @@ The content of the  `sessionization.txt` tested on the provided example is as fo
 
 It is as expected.
 
-I also included one other test I did in the tests folder. 
+I also run `run_tests.sh` within in the insight_testsuite folder.  I tested it using the provided example and also another example I generated. I got two success tests. Below is the content of the `results.txt`, once I ran the test
+```txt
+[Sun May 27 16:29:38 CDT 2018] 2 of 2 tests passed
+``
 
         
 

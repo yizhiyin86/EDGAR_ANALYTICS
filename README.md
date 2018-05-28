@@ -53,7 +53,7 @@ def check_id(input_list,ID):
 * return:
     - No return. Just used to update input_list
 * example:
-    -input_list= [ ['a',0,1],['b',1,1 ] ], new_id = 'c', col_add= 1
+    - input_list= [ ['a',0,1],['b',1,1 ] ], new_id = 'c', col_add= 1
     - Update the input_list to [ ['a',0,1,0],['b',1,1,0],['c',0,0,1] ]
 ``` python
 def add_new_user(input_list,new_id,col_add):
@@ -86,7 +86,7 @@ def add_new_user(input_list,new_id,col_add):
     -input_list= [ ['a',1,1,0,0],['b',1,1,0,1 ] ], col_to_check=2
     -output:
         - remaining_list=[ ['b',1,1,0,1 ] ]
-        -removed_list=[ ['a',1,1,0,0] ]
+        - removed_list=[ ['a',1,1,0,0] ]
 ```python
 def split_session(input_list,col_to_check):
     check_list=[0]*(col_to_check)
@@ -123,8 +123,8 @@ def split_session(input_list,col_to_check):
 * return:
     - (request_start, request_end, duration,count)
 * example:
-    -input_list= [1,2,0,0]
-    -output:
+    - input_list= [1,2,0,0]
+    - output:
         - (request_start=0,request_end=1,duration=2,count=3)
 ```python
 def session_info(input_list):

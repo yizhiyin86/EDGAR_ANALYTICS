@@ -27,17 +27,11 @@ All these are from the Python Standard Library so no additional installations ar
     - the index of the query_ID if it is in the input_list
 ``` python
 def check_id(input_list,ID):
-#     print(input_list)
-#     print(ID)
     ID_list=[i[0] for i in input_list]
-#     print('This is the ID_list\n'.format(ID_list))
     if ID in ID_list:
         index=ID_list.index(ID)
-#         print('hey I found the ID:{} and the index :{}'.format(ID,index))
         return index
     else:
-#         print('ID is {}'.format(ID))
-#         print('No ID found')
 #       I did not return False because index =0 == False!!!!!
         return 'Not Found'
 ```
@@ -94,19 +88,12 @@ def split_session(input_list,col_to_check):
     removed_list=[]
     remaining_list=[]
     for ele in input_list:
-    #        print('\n current element')
-    #        print(ele)
             
         if ele[(0-col_to_check): ]==check_list:
-    #             print('find one to remove')
             removed_list.append(ele)
-    #             print('index for the element to pop is {}'.format(index))
                 
         else:
             remaining_list.append(ele)
-    # print('\n in the function\n')
-    # print('removed_list is\n')
-    # debug(removed_list)
     return remaining_list,removed_list
 ```
 
@@ -129,7 +116,6 @@ def split_session(input_list,col_to_check):
         - (request_start=0,request_end=1,duration=2,count=3)
 ```python
 def session_info(input_list):
-#     print(input_list)
     request_list=[]
     count=sum(input_list)
     i=0
